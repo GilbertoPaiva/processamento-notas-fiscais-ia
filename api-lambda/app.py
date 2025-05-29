@@ -3,11 +3,12 @@ import boto3
 import uuid
 from chalicelib.textract import extract_text
 import traceback # Verificar erro na aws
+from chalicelib.nltk_text import parse_invoice_text
 
 app = Chalice(app_name='consumers')
 
 s3 = boto3.client('s3')
-BUCKET_NAME = 'test-sprint-4-5-6'
+BUCKET_NAME = 'teste-sprint-4-5-6'
 
 @app.route('/api/v1/invoice', methods=['POST'], content_types=['image/jpeg'])
 def post_nf():
@@ -25,11 +26,12 @@ def post_nf():
         )
 
         extracted_text = extract_text(bucket=BUCKET_NAME, key=filename)
+        parsed_data = parse_invoice_text(extracted_text)
 
         return Response(
             status_code=200,
             body={"message": f"Imagem salva com sucesso como {filename}",
-                  "texto_extraido": extracted_text.strip()}
+                  "texto_extraido": parsed_data}
         )
 
     except Exception as e:
