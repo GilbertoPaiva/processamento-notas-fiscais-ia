@@ -17,16 +17,17 @@ def post_nf():
 
         original_filename = f"{uuid.uuid4()}.jpg"
         
-        temp_key = f"temp/{original_filename}"
+        image_folder = "imagens"
+        image_key = f"{image_folder}/{original_filename}"
         
         s3.put_object(
             Bucket=BUCKET_NAME,
-            Key=temp_key,
+            Key=image_key,
             Body=image_data,
             ContentType='image/jpeg'
         )
 
-        extracted_text = extract_text(bucket=BUCKET_NAME, key=temp_key)
+        extracted_text = extract_text(bucket=BUCKET_NAME, key=image_key)
         parsed_data = parse_invoice_text(extracted_text)
         
         if parsed_data.get("forma_pgto") in ["pix", "dinheiro"]:
@@ -34,23 +35,23 @@ def post_nf():
         else:
             destination_folder = "outros"
         
-        final_key = f"{destination_folder}/{original_filename}"
+        json_filename = f"{uuid.uuid4()}.json"
+        json_key = f"{destination_folder}/{json_filename}"
         
-        s3.copy_object(
+        import json
+        s3.put_object(
             Bucket=BUCKET_NAME,
-            CopySource={'Bucket': BUCKET_NAME, 'Key': temp_key},
-            Key=final_key
-        )
-        
-        s3.delete_object(
-            Bucket=BUCKET_NAME,
-            Key=temp_key
+            Key=json_key,
+            Body=json.dumps(parsed_data).encode('utf-8'),
+            ContentType='application/json'
         )
 
         return Response(
             status_code=200,
             body={
-                "message": f"Imagem salva com sucesso como {final_key}",
+                "message": f"Processamento concluído com sucesso",
+                "imagem": image_key,
+                "json": json_key,
                 "texto_extraido": parsed_data,
                 "pasta_destino": destination_folder
             }
