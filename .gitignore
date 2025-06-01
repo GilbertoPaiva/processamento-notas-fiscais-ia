@@ -17,10 +17,3 @@ Thumbs.db
 
 # Ignorar arquivos gerados
 **/__pycache__/
-
-# Ignorar arquivos de layer
-api-lambda/nltk_layer/
-
-config.jon
-
-

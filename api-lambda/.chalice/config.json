@@ -1,0 +1,12 @@
+{
+  "version": "2.0",
+  "app_name": "api-lambda",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api",
+      "lambda_timeout": 300,
+      "lambda_memory_size": 1024,
+      "iam_role_arn": "arn:aws:iam::967644029260:role/api-lambda-dev"
+    }
+  }
+}
