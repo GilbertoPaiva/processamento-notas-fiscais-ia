@@ -3,19 +3,19 @@
     {
       "name": "default-role",
       "resource_type": "iam_role",
-      "role_arn": "arn:aws:iam::222301802538:role/api-lambda-dev",
+      "role_arn": "arn:aws:iam::967644029260:role/api-lambda-dev",
       "role_name": "api-lambda-dev"
     },
     {
       "name": "api_handler",
       "resource_type": "lambda_function",
-      "lambda_arn": "arn:aws:lambda:us-east-1:222301802538:function:api-lambda-dev"
+      "lambda_arn": "arn:aws:lambda:us-east-1:967644029260:function:api-lambda-dev"
     },
     {
       "name": "rest_api",
       "resource_type": "rest_api",
-      "rest_api_id": "tm2djmhmff",
-      "rest_api_url": "https://tm2djmhmff.execute-api.us-east-1.amazonaws.com/api/"
+      "rest_api_id": "swumjt2kzh",
+      "rest_api_url": "https://swumjt2kzh.execute-api.us-east-1.amazonaws.com/api/"
     }
   ],
   "schema_version": "2.0",

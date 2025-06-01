@@ -4,6 +4,7 @@ venv/
 # Ignorar pastas e arquivos temporários do Python
 __pycache__/
 *.py[cod]
+*.pyc
 
 # Ignorar pastas internas do Chalice 
 api-lambda/.chalice/deployments/
@@ -13,4 +14,13 @@ api-lambda/.chalice/venv/
 *.log
 .DS_Store
 Thumbs.db
+
+# Ignorar arquivos gerados
+**/__pycache__/
+
+# Ignorar arquivos de layer
+api-lambda/nltk_layer/
+
+config.jon
+
 
