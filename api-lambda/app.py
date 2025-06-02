@@ -7,13 +7,14 @@ from chalice import Chalice, Response
 import boto3
 
 from chalicelib.textract import extract_text
+from chalicelib.bedrock_processor import BedrockProcessor
 from chalicelib.nltk_text import extract_invoice_data_nltk
 
 app = Chalice(app_name='consumers')
 logger = logging.getLogger(__name__)
 
 s3 = boto3.client('s3')
-BUCKET_NAME = 'sprint-4-5-6-grupo-6'
+BUCKET_NAME = 'invoice-processing-bucket'
 
 @app.route('/api/v1/invoice', methods=['POST'], content_types=['image/jpeg'])
 def post_nf():
@@ -23,7 +24,6 @@ def post_nf():
         image_folder = "imagens"
         image_key = f"{image_folder}/{original_filename}"
         
-        # Armazena a imagem no S3
         s3.put_object(
             Bucket=BUCKET_NAME,
             Key=image_key,
@@ -32,11 +32,14 @@ def post_nf():
         )
         logger.info(f"Imagem salva em: {image_key}")
 
-        # Extrai texto e processa os dados da nota fiscal
         extracted_text = extract_text(bucket=BUCKET_NAME, key=image_key)
-        parsed_data = extract_invoice_data_nltk(extracted_text)
         
-        # Define a pasta de destino conforme a forma de pagamento
+        bedrock_processor = BedrockProcessor()
+        refined_text = bedrock_processor.refine_textract_output(extracted_text)
+        logger.info("Texto refinado com Bedrock Nova Pro")
+        
+        parsed_data = extract_invoice_data_nltk(refined_text)
+        
         if parsed_data.get("forma_pgto") in ["pix", "dinheiro"]:
             destination_folder = "dinheiro"
         else:
@@ -45,7 +48,6 @@ def post_nf():
         json_filename = f"{uuid.uuid4()}.json"
         json_key = f"{destination_folder}/{json_filename}"
         
-        # Armazena o resultado em JSON no S3
         s3.put_object(
             Bucket=BUCKET_NAME,
             Key=json_key,

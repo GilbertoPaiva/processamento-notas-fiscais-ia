@@ -1,6 +1,12 @@
 # Processamento de Notas Fiscais com IA
 
-Projeto de processamento inteligente de notas fiscais utilizando serviços AWS e técnicas de NLP.  
+Este projeto foi desenvolvido como parte d   4. **Aplicar a Layer na Função Lambda:**
+      - No console da AWS Lambda, abra a função que utiliza o NLTK.
+      - Na seção "Layers", clique em "Add a layer" e selecione "Custom layers".
+      - Escolha a layer `nltk_layer` que você acabou de criar e selecione a versão desejada.
+      - Salve as alterações.
+
+   5. **Ajustar o Código (se necessário):**ação das quarta, quinta e sexta sprints do Programa de Bolsas Compass UOL para formação em Inteligência Artificial para AWS.  
 O objetivo é criar uma API REST em Python que recebe uma imagem de nota fiscal eletrônica, armazena a imagem num bucket S3, extrai e refina o texto utilizando o Amazon Textract e recursos de NLP (com NLTK), e armazena os dados estruturados em JSON de acordo com os requisitos.
 
 ---
@@ -14,13 +20,15 @@ A aplicação implementa os seguintes passos:
    - A imagem é salva no bucket S3 na pasta `imagens` com um nome único gerado via UUID.
 3. **Extração de Texto com Amazon Textract:**  
    - O serviço Textract é utilizado para extrair o texto da imagem. As linhas detectadas são agrupadas num único texto.
-4. **Processamento do Texto com NLTK:**  
+4. **Refinamento do Texto com Amazon Bedrock Nova Pro:**  
+   - O texto extraído do Textract é refinado usando o modelo Nova Pro do Amazon Bedrock para corrigir erros de OCR e melhorar a qualidade dos dados antes do processamento com NLTK.
+5. **Processamento do Texto com NLTK:**  
    - **Correção de erros de OCR:** Utiliza padrões definidos para corrigir erros comuns.
    - **Tokenização, remoção de stopwords e stemming:** O NLTK normaliza e transforma o texto para facilitar a extração de informações.
    - **Extração de entidades (NER):** Utiliza POS tagging e chunking para identificar entidades como nome do emissor, CNPJ, endereço, data de emissão, número e série da nota, valor total e forma de pagamento.
-5. **Armazenamento dos Dados Estruturados:**  
+6. **Armazenamento dos Dados Estruturados:**  
    - Com base na forma de pagamento identificada, os dados extraídos são salvos no S3 em uma pasta de destino: notas pagas em dinheiro ou pix (pasta `dinheiro`) ou outras formas (pasta `outros`).
-6. **Logs via CloudWatch:**  
+7. **Logs via CloudWatch:**  
    - Toda a execução da função Lambda gera logs que podem ser acompanhados no CloudWatch para monitoramento e debugging.
 
 ---
@@ -30,7 +38,8 @@ A aplicação implementa os seguintes passos:
 - **API REST:** Implementada utilizando [Chalice](https://chalice.readthedocs.io/) para facilitar a criação e deploy de funções Lambda.
 - **Bucket S3:** Armazena as imagens recebidas e os arquivos JSON com as informações extraídas.
 - **Amazon Textract:** Realiza a detecção de texto nas imagens.
-- **NLTK:** Processa o texto extraído, aplicando técnicas de NLP para extração de informações relevantes.
+- **Amazon Bedrock (Nova Pro):** Refina e corrige o texto extraído do Textract, melhorando a qualidade dos dados antes do processamento NLP.
+- **NLTK:** Processa o texto refinado, aplicando técnicas de NLP para extração de informações relevantes.
 - **CloudWatch Logs:** As funções Lambda registram logs para facilitar o acompanhamento da execução e resolução de problemas.
 
 ---
@@ -62,7 +71,33 @@ A aplicação implementa os seguintes passos:
    pip install -r api-lambda/requirements.txt
    ```
 
-4. **Gerar e Aplicar a Layer do NLTK via AWS Console:**
+4. **Configurar o Amazon Bedrock:**
+   
+   1. **Habilitar o modelo Nova Pro:**
+      - Acesse o console do Amazon Bedrock na região us-east-1
+      - Vá para "Model access" no painel lateral
+      - Encontre o modelo "Nova Pro" (amazon.nova-pro-v1:0)
+      - Clique em "Request model access" e aguarde a aprovação
+   
+   2. **Configurar permissões IAM:**
+      - A role da função Lambda precisa ter permissão para usar o Bedrock
+      - Adicione a política com as seguintes permissões:
+        ```json
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "bedrock:InvokeModel"
+                    ],
+                    "Resource": "arn:aws:bedrock:*:*:model/amazon.nova-pro-v1:0"
+                }
+            ]
+        }
+        ```
+
+5. **Gerar e Aplicar a Layer do NLTK via AWS Console:**
 
    1. **Preparar os arquivos da layer localmente:**
       - Crie uma estrutura de diretórios que simule a raiz padrão do Python. Por exemplo, num ambiente Linux/WSL:
@@ -129,14 +164,14 @@ chalice deploy
 ```
 O comando retornará a URL da API. Por exemplo:
 ```
-https://swumjt2kzh.execute-api.us-east-1.amazonaws.com/api/api/v1/invoice
+https://0bcvfntv75.execute-api.us-east-1.amazonaws.com/api/api/v1/invoice
 ```
 
 ### Uso da API
 Envie uma requisição POST para `/api/v1/invoice` com o corpo contendo o arquivo da nota fiscal (formato `image/jpeg`).  
 Exemplo com cURL:
 ```bash
-curl --location --request POST 'https://swumjt2kzh.execute-api.us-east-1.amazonaws.com/api/api/v1/invoice' \
+curl --location --request POST 'https://0bcvfntv75.execute-api.us-east-1.amazonaws.com/api/api/v1/invoice' \
 --form 'file=@"path/to/nota.jpg"'
 ```
 
