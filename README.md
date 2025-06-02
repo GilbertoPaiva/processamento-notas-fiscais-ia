@@ -1,12 +1,6 @@
 # Processamento de Notas Fiscais com IA
 
-Este projeto foi desenvolvido como parte d   4. **Aplicar a Layer na Função Lambda:**
-      - No console da AWS Lambda, abra a função que utiliza o NLTK.
-      - Na seção "Layers", clique em "Add a layer" e selecione "Custom layers".
-      - Escolha a layer `nltk_layer` que você acabou de criar e selecione a versão desejada.
-      - Salve as alterações.
-
-   5. **Ajustar o Código (se necessário):**ação das quarta, quinta e sexta sprints do Programa de Bolsas Compass UOL para formação em Inteligência Artificial para AWS.  
+Projeto de processamento inteligente de notas fiscais utilizando serviços AWS e técnicas de NLP.  
 O objetivo é criar uma API REST em Python que recebe uma imagem de nota fiscal eletrônica, armazena a imagem num bucket S3, extrai e refina o texto utilizando o Amazon Textract e recursos de NLP (com NLTK), e armazena os dados estruturados em JSON de acordo com os requisitos.
 
 ---
