@@ -224,11 +224,7 @@ Após o deploy, a URL será exibida no terminal. Utilize essa URL para testar a 
 ---
 
 ## Equipe
-
-- [Alexandre Castejon]
-- [Cleison Rocha Xavier]
 - [Gilberto de Paiva Melo]
-
 ---
 
 **
