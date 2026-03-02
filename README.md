@@ -223,8 +223,5 @@ Após o deploy, a URL será exibida no terminal. Utilize essa URL para testar a 
 
 ---
 
-## Equipe
+## Autor
 - [Gilberto de Paiva Melo]
----
-
-**
